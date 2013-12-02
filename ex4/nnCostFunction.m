@@ -74,6 +74,19 @@ for i = 1:m
 	J += Ji;
 end
 
+lambda_filter1 = eye(size(Theta1, 2));
+lambda_filter1(1,1) = 0;
+
+lambda_filter2 = eye(size(Theta2, 2));
+lambda_filter2(1,1) = 0;
+
+Theta1_filtered = Theta1 * lambda_filter1;
+Theta1_squared = Theta1_filtered .* Theta1_filtered;
+
+Theta2_filtered = Theta2 * lambda_filter2;
+Theta2_squared = Theta2_filtered .* Theta2_filtered;
+
+J += ( sum(sum(Theta1_squared)) + sum(sum(Theta2_squared)) ) .* (lambda / (2 * m))
 
 
 
