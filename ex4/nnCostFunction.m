@@ -64,14 +64,26 @@ Theta2_grad = zeros(size(Theta2));
 
 for i = 1:m
 	Xi = X(i,:);
-	h1 = sigmoid([1 Xi] * Theta1');
-	h2 = sigmoid([1 h1] * Theta2');
 
-	yi = zeros(size(h2,2),1);
+	a1_1i = [1 Xi];
+	z2i = a1_1i * Theta1';
+	a2i = sigmoid(z2i);
+
+	a2_1i = [1 a2i];
+	z3i = a2_1i * Theta2';
+	a3i = sigmoid(z3i);
+
+	yi = zeros(size(a3i,2),1);
 	yi(y(i)) = 1;
 
-	Ji = -( log(h2) * yi + log(1 - h2) * (1 - yi) ) / m;
+	Ji = -( log(a3i) * yi + log(1 - a3i) * (1 - yi) ) / m;
 	J += Ji;
+
+	delta3i = a3i' - yi;
+	delta2i = (Theta2' * delta3i)(2:end) .* sigmoidGradient(z2i');
+
+	Theta1_grad += (delta2i * a1_1i);
+	Theta2_grad += (delta3i * a2_1i);
 end
 
 lambda_filter1 = eye(size(Theta1, 2));
@@ -88,6 +100,8 @@ Theta2_squared = Theta2_filtered .* Theta2_filtered;
 
 J += ( sum(sum(Theta1_squared)) + sum(sum(Theta2_squared)) ) .* (lambda / (2 * m))
 
+Theta1_grad = Theta1_grad * (1/m) + Theta1_filtered * (lambda/m);
+Theta2_grad = Theta2_grad * (1/m) + Theta2_filtered * (lambda/m);
 
 
 
