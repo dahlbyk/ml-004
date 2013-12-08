@@ -19,6 +19,12 @@ grad = zeros(size(theta));
 %               You should set J to the cost and grad to the gradient.
 %
 
+lambda_filter = eye(size(theta)(1));
+lambda_filter(1,1) = 0;
+
+J = (X * theta - y)' * (X * theta - y) / (2 * m) + (theta' * lambda_filter * theta) .* (lambda / (2 * m));
+
+grad = X' * (X * theta - y) / m + (lambda_filter * theta) .* (lambda / m);
 
 
 
